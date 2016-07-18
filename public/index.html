@@ -1,5 +1,5 @@
 <!DOCTYPE>
-<html ng-app>
+<html ng-app="liaoyuanApp">
     <head>
         <!-- Latest compiled and minified CSS -->
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
@@ -7,17 +7,24 @@
         <!-- Optional theme -->
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
 
-        <!-- Latest compiled and minified JavaScript -->
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
-        
         <title>Short URL Generator</title>
     </head>
     <body>
-        <div class="container"> 
+        <div class="container" ng-controller="MainCtrl as main"> 
             <h1>Short URL Generator</h1>
+            <div ng-if="main.shortURL">
+                Your short url is: {{main.shortURL}}
+            </div>
+            <div class="form-group">
+                <label class="control-label" for="originalURL" ng-if="!main.shortURL">Enter URL:</label>
+                <label class="control-label" for="originalURL" ng-if="main.shortURL">Enter another URL:</label>
+                <input class="form-control" id="originalURL" ng-model="main.originalURL">
+            </div>
+            <button type="submit" class="btn btn-default" ng-click="main.getShortURL()">GO</button>
         </div>
-        <input ng-model="test"> {{test}}
+        
 
         <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.7/angular.min.js"></script>
+        <script src="controllers/controller.js"></script>
     </body>
 </html>
