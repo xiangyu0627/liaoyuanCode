@@ -61,11 +61,12 @@ function containsShortURL(shortURL) {
  */
 app.post('/getShortURL', function (req, res) { 
     var originalURL = req.body.originalURL;
-
+    if (originalURL.length < 5) {
+        res.status(404).send('Invalid Url');
+    }
     // Search database for originalURL
     db.urlList.findOne({ originalURL: originalURL }, function (err, doc) {
         // return the shortURL if originalURL exists in database already 
-        debugger;
         if (doc) {
             var result = {
                 originalURL: originalURL,

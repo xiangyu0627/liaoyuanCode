@@ -11,16 +11,26 @@
     </head>
     <body>
         <div class="container" ng-controller="MainCtrl as main"> 
-            <h1>Short URL Generator</h1>
+            <div class="page-header">
+                <h1>Short URL Generator</h1>
+            </div>
             <div ng-if="main.shortURL">
-                Your short url is: {{main.shortURL}}
+                <p style="font-size: 200%;">
+                    Your short url is: <a>http://{{main.shortURL}}</a>
+                <p>
             </div>
-            <div class="form-group">
-                <label class="control-label" for="originalURL" ng-if="!main.shortURL">Enter URL:</label>
-                <label class="control-label" for="originalURL" ng-if="main.shortURL">Enter another URL:</label>
-                <input class="form-control" id="originalURL" ng-model="main.originalURL">
-            </div>
-            <button type="submit" class="btn btn-default" ng-click="main.getShortURL()">GO</button>
+            <form name="main.urlForm" novalidate>
+                <div class="form-group" ng-class="{'has-error' : !main.urlValid()}">
+                    <label class="control-label" for="originalURL" ng-if="!main.shortURL">Enter URL:</label>
+                    <label class="control-label" for="originalURL" ng-if="main.shortURL">Enter another URL:</label>
+                    <div class="input-group">
+                        <span class="input-group-addon" >http://</span>
+                        <input class="form-control" type="text" name="originalURL" ng-model="main.originalURL" required>
+                    </div>
+                    <p ng-show=" !main.urlValid() " class="help-block"> URL too short</p>
+                </div>
+                <button type="button" class="btn btn-default" ng-click="main.getShortURL()" ng-disabled="!main.urlValid() || main.originalURL === ''">GO</button>
+            </form>
         </div>
         
 

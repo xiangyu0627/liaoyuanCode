@@ -7,7 +7,7 @@ liaoyuanApp.controller('MainCtrl', ['$http', function ($http) {
     var scope = this;
     scope.originalURL = '';
     scope.shortURL = '';
-
+    scope.urlForm = '';
     // send POST request with original URL to server and geta short URL back.
     scope.getShortURL = function () {
         $http( { 
@@ -25,6 +25,11 @@ liaoyuanApp.controller('MainCtrl', ['$http', function ($http) {
         
         // clear original URL field
         scope.originalURL = '';
+        scope.urlForm.$setPristine();
+    };
+
+    scope.urlValid = function () {
+        return scope.originalURL.length >= 5 || scope.urlForm.originalURL.$pristine;
     };
 
 }]);
