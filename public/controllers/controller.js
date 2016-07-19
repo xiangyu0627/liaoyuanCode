@@ -2,7 +2,7 @@
 
 var liaoyuanApp = angular.module('liaoyuanApp', []);
 
-liaoyuanApp.controller('MainCtrl', ['$http', function ($http) {
+liaoyuanApp.controller('MainCtrl', ['$http', '$window', function ($http, $window) {
     
     var scope = this;
     scope.originalURL = '';
@@ -30,6 +30,21 @@ liaoyuanApp.controller('MainCtrl', ['$http', function ($http) {
 
     scope.urlValid = function () {
         return scope.originalURL.length >= 5 || scope.urlForm.originalURL.$pristine;
+    };
+
+    scope.redirect = function () {
+        $http( { 
+            method: 'POST', 
+            url: '/redirect',
+            data: { shortURL: scope.shortURL }
+        })
+        .success(function (data, status) {
+            // set the current short URL to data that got back from server  
+            $window.open('http://' + data.originalURL);
+        })
+        .error(function (data, status) {
+            alert('Server error, please try again.');
+        });
     };
 
 }]);
