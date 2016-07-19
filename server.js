@@ -20,18 +20,15 @@ function generateShortURL(originalURL, flag, shortURL, callback) {
         for (var i = 0; i < 5; i++) {
             var ascii = originalURL.charCodeAt(originalURL.length - 1 - i);
             result += urlChar[ascii % 36];
-            console.log('flag 0 ' + result);
         }
     } else {
         var randomNum = Math.floor((Math.random() * 35));
         var randomIndex = Math.floor((Math.random() * 3 + 1));
         result = shortURL.substring(0, randomIndex) + urlChar[randomNum] + shortURL.substring(randomIndex + 1);
-        console.log('flag 1 ' + result);
     }
     
     db.urlList.findOne({ shortURL: result }, function (err, doc) {
         if (doc) {
-            console.log('generates again');
             generateShortURL(originalURL, 1, result, callback);
         } else {
             callback(result);
@@ -45,11 +42,9 @@ function generateShortURL(originalURL, flag, shortURL, callback) {
  */
 function containsShortURL(shortURL) {
     db.urlList.findOne({ shortURL: shortURL }, function (err, doc) {
-        if (doc) {
-            console.log(true);            
+        if (doc) {         
             return true;
         } else {
-            console.log(false);
             return false;
         }
     });
@@ -77,7 +72,6 @@ app.post('/getShortURL', function (req, res) {
         } else {
             // Generate initial shortURL
             generateShortURL(originalURL, 0, '', function (shortURL) {
-                console.log('got shortURL ' + shortURL);
                 var result = {
                     originalURL: originalURL,
                     shortURL: shortURL
