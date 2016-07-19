@@ -89,9 +89,7 @@ app.post('/getShortURL', function (req, res) {
      * Listens to querys from front end, take short url and redirect to originalURL
      */
     app.post('/redirect', function (req, res) {
-        console.log(req.body.shortURL);
         db.urlList.findOne({ shortURL: req.body.shortURL }, function (err, doc) {
-            console.log(doc);
             res.json(doc);
         });
     });
