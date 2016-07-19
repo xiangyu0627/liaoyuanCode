@@ -10,8 +10,49 @@ app.use(bodyParser.json());
 /**
  * Takes an URL and generates a shortened version of it
  */
-function generateShortURL(originalURL) {
-    return '1234';
+function generateShortURL(originalURL, flag, shortURL, callback) {
+    var urlChar = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h',
+        'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r',
+        's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '0', '1',
+        '2', '3', '4', '5', '6', '7', '8', '9'];
+    var result = '';
+    if (flag === 0) {
+        for (var i = 0; i < 5; i++) {
+            var ascii = originalURL.charCodeAt(originalURL.length - 1 - i);
+            result += urlChar[ascii % 36];
+            console.log('flag 0 ' + result);
+        }
+    } else {
+        var randomNum = Math.floor((Math.random() * 35));
+        var randomIndex = Math.floor((Math.random() * 3 + 1));
+        result = shortURL.substring(0, randomIndex) + urlChar[randomNum] + shortURL.substring(randomIndex + 1);
+        console.log('flag 1 ' + result);
+    }
+    
+    db.urlList.findOne({ shortURL: result }, function (err, doc) {
+        if (doc) {
+            console.log('generates again');
+            generateShortURL(originalURL, 1, result, callback);
+        } else {
+            callback(result);
+        }
+    });
+}
+
+/**
+ * Search database for shortURL, returns true if database already has the same url,
+ * returns false if it doesn't.
+ */
+function containsShortURL(shortURL) {
+    db.urlList.findOne({ shortURL: shortURL }, function (err, doc) {
+        if (doc) {
+            console.log(true);            
+            return true;
+        } else {
+            console.log(false);
+            return false;
+        }
+    });
 }
 
 /**
@@ -20,17 +61,35 @@ function generateShortURL(originalURL) {
  */
 app.post('/getShortURL', function (req, res) { 
     var originalURL = req.body.originalURL;
-    var shortURL = generateShortURL(originalURL);
 
-    var result = {
-        originalURL: originalURL,
-        shortURL: shortURL
-    }
+    // Search database for originalURL
+    db.urlList.findOne({ originalURL: originalURL }, function (err, doc) {
+        // return the shortURL if originalURL exists in database already 
+        debugger;
+        if (doc) {
+            var result = {
+                originalURL: originalURL,
+                shortURL: doc.shortURL
+            }
+            res.json(result);
+            
+        } else {
+            // Generate initial shortURL
+            generateShortURL(originalURL, 0, '', function (shortURL) {
+                console.log('got shortURL ' + shortURL);
+                var result = {
+                    originalURL: originalURL,
+                    shortURL: shortURL
+                }
 
-    // insert to database and then responde to front end
-    db.urlList.insert(result, function (err, doc) {
-        res.json(doc);
+                // Insert to database and then responde to front end
+                db.urlList.insert(result, function (err, doc) {
+                    res.json(doc);
+                });
+            }); 
+        }
     });
+    
 });
 
 app.listen(3000);
